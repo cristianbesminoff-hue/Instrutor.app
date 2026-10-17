@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Treinô - Acesso do Instrutor</title>
+
+<!-- PWA Manifest & Theme -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff6a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Firebase SDK Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+:root {
+  --bg: #0b0f17;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --tx: #f8fafc;
+  --mut: #94a3b8;
+  --pri: #ff6a1a;
+  --pri-gradient: linear-gradient(135deg, #ff6a1a 0%, #ff3b00 100%);
+  --pri-shadow: rgba(255, 106, 26, 0.35);
+  --input-bg: rgba(255, 255, 255, 0.07);
+  --ok: #22c55e;
+  --no: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  background: var(--bg);
+  color: var(--tx);
+  font: 16px/1.4 system-ui, -apple-system, sans-serif;
+  max-width: 450px;
+  padding: 24px 16px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  width: 100%;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+h1 {
+  font-size: 26px;
+  margin: 0 0 8px;
+  color: #fff;
+  font-weight: 800;
+}
+
+p.sub {
+  color: var(--mut);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+label {
+  display: block;
+  text-align: left;
+  font-size: 13px;
+  color: var(--mut);
+  margin: 14px 0 6px;
+  font-weight: 500;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--input-bg);
+  color: var(--tx);
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+input:focus {
+  border-color: var(--pri);
+  box-shadow: 0 0 10px var(--pri-shadow);
+}
+
+.btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--pri-gradient);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px var(--pri-shadow);
+  transition: all 0.2s ease;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.mut {
+  color: var(--mut);
+  font-size: 12px;
+  margin-top: 16px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🏋️ Treinô</h1>
+  <p class="sub">Portal Exclusivo para Instrutores</p>
+  
+  <label>Chave Única de Acesso</label>
+  <input id="chave" type="text" placeholder="EX: INST-XXXX" autocomplete="off">
+  
+  <button class="btn" onclick="entrarInstrutor()">Entrar no Painel</button>
+  
+  <div class="mut">Insira a chave autorizada pelo Administrador Master.</div>
+</div>
+
+<script>
+// Registo do Service Worker para PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW erro: ', err));
+}
+
+// Configuração do Firebase
+const CFG = {
+  apiKey: "AIzaSyCsidHGMxmF_OGqxZGeweUS6UCF_OViIvc",
+  authDomain: "treino-app-787d7.firebaseapp.com",
+  projectId: "treino-app-787d7",
+  appId: "1:816237967715:web:96f923e22a8b4ed2e73b56"
+};
+
+firebase.initializeApp(CFG);
+const db = firebase.firestore();
+
+async function entrarInstrutor() {
+  const chave = document.getElementById("chave").value.trim();
+  if (!chave) return alert("Por favor, digite a sua chave de acesso.");
+
+  try {
+    // Procura no Firestore se existe uma chave válida autorizada pelo Master
+    const query = await db.collection("chaves_instrutores").where("chave", "==", chave).where("ativo", "==", true).get();
+    
+    if (query.empty) {
+      alert("Chave inválida ou desativada pelo Administrador.");
+      return;
+    }
+
+    const dadosInstrutor = query.docs[0].data();
+    
+    // Guarda os dados da sessão localmente no navegador e redireciona para o painel
+    localStorage.setItem("treino_instrutor", JSON.stringify(dadosInstrutor));
+    window.location.href = "instrutor.html";
+
+  } catch (e) {
+    alert("Erro ao validar chave: " + e.message);
+  }
+}
+</script>
+
+</body>
+</html>

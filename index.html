@@ -156,11 +156,10 @@ firebase.initializeApp(CFG);
 const db = firebase.firestore();
 
 async function entrarInstrutor() {
-  const chave = document.getElementById("chave").value.trim();
+  const chave = document.getElementById("chave").value.trim().toUpperCase();
   if (!chave) return alert("Por favor, digite a sua chave de acesso.");
 
   try {
-    // Procura no Firestore se existe uma chave válida autorizada pelo Master
     const query = await db.collection("chaves_instrutores").where("chave", "==", chave).where("ativo", "==", true).get();
     
     if (query.empty) {
@@ -170,7 +169,6 @@ async function entrarInstrutor() {
 
     const dadosInstrutor = query.docs[0].data();
     
-    // Guarda os dados da sessão localmente no navegador e redireciona para o painel
     localStorage.setItem("treino_instrutor", JSON.stringify(dadosInstrutor));
     window.location.href = "instrutor.html";
 

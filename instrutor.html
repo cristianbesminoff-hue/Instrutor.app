@@ -196,13 +196,18 @@ const fone = t => String(t || "").replace(/\D/g, "").slice(-11);
 const em = ph => ph + "@academia.app";
 const pwAluno = (ph, pin) => "Tn@" + ph + "#" + pin + "#treino26";
 
+// BANCO DE EXERCÍCIOS AMPLIADO
 const G = {
-  "Peito": "Supino reto com barra|Supino inclinado com halteres|Crucifixo na polia|Crossover|Flexão de braço",
-  "Costas": "Puxada alta na polia|Remada curvada|Remada baixa na polia|Pulldown|Barra fixa",
-  "Pernas": "Agachamento livre|Leg Press 45°|Cadeira extensora|Mesa flexora|Elevação pélvica|Panturrilhas em pé",
-  "Ombros": "Desenvolvimento com halteres|Elevação lateral|Elevação frontal|Crucifixo invertido",
-  "Braços": "Rosca direta com barra|Rosca alternada|Rosca martelo|Tríceps testa|Tríceps na polia|Tríceps corda",
-  "Core / Abdomen": "Abdominal supra|Abdominal infra na paralela|Prancha isométrica|Abdominal oblíquo"
+  "Peito": "Supino Reto com Barra|Supino Reto com Halteres|Supino Inclinado com Barra|Supino Inclinado com Halteres|Supino Declinado com Barra|Supino Declinado com Halteres|Supino na Máquina Articulada|Crucifixo Reto com Halteres|Crucifixo Inclinado com Halteres|Crucifixo na Polia (Crossover Alto)|Crossover Médio na Polia|Crossover Baixo na Polia|Peck Deck / Voador|Flexão de Braço Tradicional|Flexão de Braço Inclinada|Paralelas para Peito (Chest Dips)|Pull-over com Halter",
+  "Costas": "Puxada Alta Frontal (Pegada Aberta)|Puxada Alta Supinada (Pegada Fechada)|Puxada Alta Neutra|Remada Curvada com Barra|Remada Curvada com Halteres|Remada Baixa na Polia (Triângulo)|Remada Unilateral com Halter (Serrote)|Remada Articulada|Remada T (Cavalo)|Pulldown na Polia Alta|Barra Fixa (Pronada)|Barra Fixa (Supinada)|Levantamento Terra|Crucifixo Invertido na Polia|Crucifixo Invertido com Halteres|Peck Deck Invertido|Puxada Articulada Unilateral",
+  "Quadríceps": "Agachamento Livre com Barra|Agachamento Guiado (Smith)|Agachamento Frontal|Leg Press 45°|Leg Press Horizontal|Cadeira Extensora|Agachamento Búlgaro com Halteres|Afundo com Halteres|Passada em Deslocamento|Agachamento Hack|Agachamento Sissy (Sissy Squat)|Subida no Banco (Step-up)",
+  "Posterior / Isquiotibiais": "Mesa Flexora|Cadeira Flexora|Stiff com Barra|Stiff com Halteres|Levantamento Terra Romeno (RDL)|Flexor Vertical Unilateral|Bom Dia (Good Morning)|Flexão de Pernas na Bola Suíça",
+  "Ombros": "Desenvolvimento com Barra Frontal|Desenvolvimento com Halteres|Desenvolvimento Arnold|Desenvolvimento na Máquina Articulada|Elevação Lateral com Halteres|Elevação Lateral na Polia|Elevação Lateral na Máquina|Elevação Frontal com Halteres|Elevação Frontal com Barra|Elevação Frontal na Polia|Elevação Frontal com Anilha|Remada Alta com Barra|Remada Alta na Polia|Encolhimento de Ombros com Barra|Encolhimento de Ombros com Halteres",
+  "Bíceps": "Rosca Direta com Barra Reta|Rosca Direta com Barra W|Rosca Alternada com Halteres|Rosca Martelo com Halteres|Rosca Martelo na Polia (Corda)|Rosca Concentrada com Halter|Rosca Scott com Barra W|Rosca Scott Unilateral com Halter|Rosca Scott na Máquina|Rosca Inclinada com Halteres|Rosca na Polia Alta (Duplo Bíceps)|Rosca Inversa com Barra",
+  "Tríceps": "Tríceps Pulley (Barra Reta)|Tríceps Pulley (Barra V)|Tríceps Corda na Polia|Tríceps Testa com Barra W|Tríceps Testa com Halteres|Tríceps Francês Unilateral com Halter|Tríceps Francês com Barra W|Tríceps Coice com Halter|Tríceps Coice na Polia|Tríceps nas Paralelas|Tríceps no Banco|Supino Fechado",
+  "Panturrilhas": "Gêmeos em Pé na Máquina|Gêmeos Sentado (Cavalinho)|Gêmeos no Leg Press 45°|Gêmeos em Pé Unilateral com Halter|Panturrilha no Agachamento Hack",
+  "Glúteos": "Elevação Pélvica com Barra|Elevação Pélvica na Máquina|Cadeira Abdutora|Glúteo na Polia (Extension/Kickback)|Glúteo Quatro Apoios|Agachamento Sumo com Halter|Afundo Búlgaro Focado em Glúteo",
+  "Core / Abdómen": "Abdominal Infra no Banco|Abdominal Infra na Paralela|Abdominal Supra Curto|Abdominal Supra na Polia|Abdominal Obliquo Deitado|Abdominal Obliquo na Polia|Prancha Isométrica|Prancha Lateral|Abdominal na Roda (Ab Roller)|Vacuum Abdominal"
 };
 
 function sair() {
@@ -210,7 +215,6 @@ function sair() {
   window.location.href = "index.html";
 }
 
-// Verifica se o instrutor entrou com a chave válida
 window.addEventListener("DOMContentLoaded", async () => {
   const ses = localStorage.getItem("treino_instrutor");
   if (!ses) {
@@ -257,7 +261,7 @@ async function vAlunos() {
       <div class="mut">${esc(u.phone)} · PIN ${esc(u.pin || "sem PIN")}${u.peso ? ` · ${u.peso} kg · ${u.alt} cm · ${u.obj === "perder" ? "perder peso" : "ganhar massa"} · ${u.dias || "?"} dias/sem` : " · sem perfil"}</div>
       ${pl.length ? `<div class="mut" style="margin:8px 0 4px">Treino ${esc(u.hoje)}</div>` + pl.map(e => {
         const ok = lg.done.includes(e.id);
-        return `<div class="item ex ${ok ? "ok" : ""}"><div><b>${esc(e.n)}</b>${lg.loads[e.id] ? `<div class="mut">${esc(lg.loads[e.id])} kg</div>` : ""}</div><span class="tag" style="background:var(--${ok ? "ok" : "no"})">${ok ? "Feito" : "Pendente"}</span></div>`;
+        return `<div class="item ex ${ok ? "ok" : ""}"><div><b>${esc(e.n)}</b>${lg.loads[e.id] ? `<div class="mut">${esc(lg.loads[e.id])}</div>` : ""}</div><span class="tag" style="background:var(--${ok ? "ok" : "no"})">${ok ? "Feito" : "Pendente"}</span></div>`;
       }).join("") : '<div class="mut" style="margin-top:6px">Ainda não escolheu treino.</div>'}
       ${ctl(u)}
     </div>`;

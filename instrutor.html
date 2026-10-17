@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Treinô - Painel do Instrutor</title>
+
+<!-- PWA Manifest & Theme -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff6a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- Firebase SDK Compat -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<style>
+:root {
+  --bg: #0b0f17;
+  --card-bg: rgba(255, 255, 255, 0.05);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --tx: #f8fafc;
+  --mut: #94a3b8;
+  --pri: #ff6a1a;
+  --pri-gradient: linear-gradient(135deg, #ff6a1a 0%, #ff3b00 100%);
+  --pri-shadow: rgba(255, 106, 26, 0.35);
+  --input-bg: rgba(255, 255, 255, 0.07);
+  --ok: #22c55e;
+  --no: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  background: var(--bg);
+  color: var(--tx);
+  font: 16px/1.4 system-ui, -apple-system, sans-serif;
+  max-width: 650px;
+  padding: 16px 16px 60px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 22px;
+  margin: 8px 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-weight: 800;
+}
+
+nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+nav button {
+  flex: 1;
+  padding: 12px 6px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--mut);
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+nav button.on {
+  background: var(--pri-gradient);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 14px var(--pri-shadow);
+}
+
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--card-border);
+  border-radius: 22px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+h2 { font-size: 18px; margin: 0 0 12px; color: #fff; font-weight: 700; }
+label { display: block; font-size: 13px; color: var(--mut); margin: 10px 0 4px; font-weight: 500; }
+
+input, select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--input-bg);
+  color: var(--tx);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+select option { background: #0b0f17; color: #fff; }
+
+input:focus, select:focus {
+  border-color: var(--pri);
+  box-shadow: 0 0 10px var(--pri-shadow);
+}
+
+.row { display: flex; gap: 10px; }
+.row > * { flex: 1; }
+
+.btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--pri-gradient);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px var(--pri-shadow);
+  transition: all 0.2s ease;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.lnk {
+  background: none;
+  border: 0;
+  color: var(--pri);
+  font-size: 14px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mut { color: var(--mut); font-size: 13px; }
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--card-border);
+  gap: 10px;
+}
+
+.item:last-child { border-bottom: 0; }
+
+.tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.x { background: none; border: 0; color: var(--no); font-size: 18px; cursor: pointer; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW erro: ', err));
+}
+
+const CFG = {
+  apiKey: "AIzaSyCsidHGMxmF_OGqxZGeweUS6UCF_OViIvc",
+  authDomain: "treino-app-787d7.firebaseapp.com",
+  projectId: "treino-app-787d7",
+  appId: "1:816237967715:web:96f923e22a8b4ed2e73b56"
+};
+
+firebase.initializeApp(CFG);
+const db = firebase.firestore();
+let ME = null;
+
+const $ = i => document.getElementById(i);
+const today = (d = new Date()) => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
+const esc = t => String(t == null ? "" : t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fone = t => String(t || "").replace(/\D/g, "").slice(-11);
+const em = ph => ph + "@academia.app";
+const pwAluno = (ph, pin) => "Tn@" + ph + "#" + pin + "#treino26";
+
+const G = {
+  "Peito": "Supino reto com barra|Supino inclinado com halteres|Crucifixo na polia|Crossover|Flexão de braço",
+  "Costas": "Puxada alta na polia|Remada curvada|Remada baixa na polia|Pulldown|Barra fixa",
+  "Pernas": "Agachamento livre|Leg Press 45°|Cadeira extensora|Mesa flexora|Elevação pélvica|Panturrilhas em pé",
+  "Ombros": "Desenvolvimento com halteres|Elevação lateral|Elevação frontal|Crucifixo invertido",
+  "Braços": "Rosca direta com barra|Rosca alternada|Rosca martelo|Tríceps testa|Tríceps na polia|Tríceps corda",
+  "Core / Abdomen": "Abdominal supra|Abdominal infra na paralela|Prancha isométrica|Abdominal oblíquo"
+};
+
+function sair() {
+  localStorage.removeItem("treino_instrutor");
+  window.location.href = "index.html";
+}
+
+// Verifica se o instrutor entrou com a chave válida
+window.addEventListener("DOMContentLoaded", async () => {
+  const ses = localStorage.getItem("treino_instrutor");
+  if (!ses) {
+    window.location.href = "index.html";
+    return;
+  }
+  ME = JSON.parse(ses);
+  PLAN = (await db.doc("plans/main").get()).data() || {};
+  render();
+});
+
+let PLAN = {}, tab = "al", curT = "A", curG = Object.keys(G)[0], ALU = [], LOGS = [];
+const TR = ["A", "B", "C", "D", "E"];
+
+async function render() {
+  const T = [["al", "Alunos"], ["tr", "Treinos"], ["nu", "Nutri"]];
+  $("app").innerHTML = `<h1><span>📋 ${esc(ME.nome || "Instrutor")}</span><button class="lnk" onclick="sair()">Sair</button></h1><nav>${T.map(t => `<button class="${t[0] === tab ? "on" : ""}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join("")}</nav><div id="v"></div>`;
+  if (tab === "al") await vAlunos();
+  else if (tab === "tr") vTreinos();
+  else $("v").innerHTML = '<div class="card"><h2>Nutricionista</h2><div class="mut">Em breve: cardápio personalizado por aluno.</div></div>';
+}
+
+async function vAlunos() {
+  $("v").innerHTML = '<div class="mut">Carregando alunos…</div>';
+  const since = today(new Date(Date.now() - 14 * 864e5));
+  const [us, ls] = await Promise.all([
+    db.collection("users").where("role", "==", "aluno").get(),
+    db.collection("logs").where("date", ">=", since).get()
+  ]);
+  ALU = us.docs.map(d => ({ id: d.id, ...d.data() }));
+  LOGS = ls.docs.map(d => d.data());
+
+  const t = today();
+  $("v").innerHTML = novoForm() + ALU.map(u => {
+    const mine = LOGS.filter(l => l.uid === u.id && ((l.done || []).length)).map(l => l.date).sort();
+    const last = mine[mine.length - 1];
+    const gap = last ? Math.floor((new Date(t) - new Date(last)) / 864e5) : null;
+    const lg = LOGS.find(l => l.uid === u.id && l.date === t) || { done: [], loads: {} };
+    const warn = gap === null || gap >= 3 ? `<span class="tag" style="background:var(--no)">${gap === null ? "nunca treinou" : "sem treinar há " + gap + " dias"}</span>` : "";
+    const pl = PLAN[u.hoje] || [];
+
+    return `<div class="card">
+      <h2>${esc(u.nome)} ${stt(u)} ${warn}</h2>
+      <div class="mut">${esc(u.phone)} · PIN ${esc(u.pin || "sem PIN")}${u.peso ? ` · ${u.peso} kg · ${u.alt} cm · ${u.obj === "perder" ? "perder peso" : "ganhar massa"} · ${u.dias || "?"} dias/sem` : " · sem perfil"}</div>
+      ${pl.length ? `<div class="mut" style="margin:8px 0 4px">Treino ${esc(u.hoje)}</div>` + pl.map(e => {
+        const ok = lg.done.includes(e.id);
+        return `<div class="item ex ${ok ? "ok" : ""}"><div><b>${esc(e.n)}</b>${lg.loads[e.id] ? `<div class="mut">${esc(lg.loads[e.id])} kg</div>` : ""}</div><span class="tag" style="background:var(--${ok ? "ok" : "no"})">${ok ? "Feito" : "Pendente"}</span></div>`;
+      }).join("") : '<div class="mut" style="margin-top:6px">Ainda não escolheu treino.</div>'}
+      ${ctl(u)}
+    </div>`;
+  }).join("") || '<div class="card mut">Nenhum aluno cadastrado.</div>';
+}
+
+function vTreinos() {
+  const l = PLAN[curT] || [];
+  $("v").innerHTML = `<div class="card">
+    <label>Treino</label>
+    <select onchange="curT=this.value;render()">${TR.map(t => `<option ${t === curT ? "selected" : ""}>${t}</option>`).join("")}</select>
+    <label>Grupo muscular</label>
+    <select onchange="curG=this.value;render()">${Object.keys(G).map(x => `<option ${x === curG ? "selected" : ""}>${x}</option>`).join("")}</select>
+    <label>Exercício</label>
+    <select id="en">${G[curG].split("|").map(x => `<option>${x}</option>`).join("")}</select>
+    <div class="row">
+      <div><label>Séries</label><input id="se" type="number" value="3"></div>
+      <div><label>Repetições</label><input id="rp" value="12"></div>
+    </div>
+    <label>Link do GIF/imagem de execução (opcional)</label>
+    <input id="gf" placeholder="https://...">
+    <button class="btn" onclick="addE()">Adicionar ao treino ${curT}</button>
+  </div>
+  <div class="card">
+    <h2>Treino ${curT}</h2>
+    ${l.map(e => `<div class="item"><div><b>${esc(e.n)}</b><div class="mut">${esc(e.g)} ·${esc(e.s)}x${esc(e.r)}${e.gif ? " · 🎞" : ""}</div></div><button class="x" onclick="delE('${e.id}')">✕</button></div>`).join("") || '<span class="mut">Sem exercícios cadastrados.</span>'}
+  </div>`;
+}
+
+async function addE() {
+  (PLAN[curT] = PLAN[curT] || []).push({ id: "e" + Date.now(), n: $("en").value, g: curG, s: $("se").value, r: $("rp").value, gif: $("gf").value.trim() });
+  await db.doc("plans/main").set(PLAN);
+  render();
+}
+
+async function delE(id) {
+  PLAN[curT] = PLAN[curT].filter(e => e.id !== id);
+  await db.doc("plans/main").set(PLAN);
+  render();
+}
+
+const rnd = () => String(Math.floor(1000 + Math.random() * 9000));
+const novoForm = () => `<div class="card">
+  <h2>Novo Aluno</h2>
+  <div class="row">
+    <div><label>Nome</label><input id="nn"></div>
+    <div><label>Telefone (com DDD)</label><input id="np" type="tel" inputmode="tel"></div>
+  </div>
+  <label>PIN de 4 números</label>
+  <input id="npin" inputmode="numeric" maxlength="4" value="${rnd()}">
+  <button class="btn" onclick="novoAluno()">Cadastrar Aluno</button>
+  <div class="mut" style="margin-top:6px">O aluno entra com telefone + PIN.</div>
+</div>`;
+
+const stt = u => {
+  const s = u.status || "ativo", c = { ativo: "var(--ok)", pausado: "#f08c00", bloqueado: "var(--no)" }[s];
+  return `<span class="tag" style="background:${c}">${s}</span>`;
+};
+
+const ctl = u => `<div class="row" style="margin-top:10px;flex-wrap:wrap">
+  <button class="lnk" onclick="setSt('${u.id}','ativo')">Ativar</button>
+  <button class="lnk" onclick="setSt('${u.id}','pausado')">Pausar</button>
+  <button class="lnk" onclick="setSt('${u.id}','bloqueado')">Bloquear</button>
+  <button class="lnk" onclick="edNome('${u.id}')">Editar Nome</button>
+  <button class="lnk" onclick="novoPin('${u.id}')">Novo PIN</button>
+</div>`;
+
+async function setSt(id, s) {
+  await db.doc("users/" + id).update({ status: s });
+  render();
+}
+
+async function edNome(id) {
+  const a = ALU.find(x => x.id === id), n = prompt("Nome do aluno:", a.nome);
+  if (n && n.trim()) {
+    await db.doc("users/" + id).update({ nome: n.trim() });
+    render();
+  }
+}
+
+async function novoPin(id) {
+  const a = ALU.find(x => x.id === id), p = prompt("Novo PIN de 4 números para " + a.nome + ":", rnd());
+  if (p === null) return;
+  const pin = p.trim();
+  if (!/^\d{4}$/.test(pin)) return alert("O PIN precisa ter 4 números.");
+  
+  const sec = firebase.initializeApp(CFG, "sec" + Date.now());
+  try {
+    const old = a.pin ? pwAluno(a.phone, a.pin) : "Tn@" + a.phone + "#treino26";
+    const c = await sec.auth().signInWithEmailAndPassword(em(a.phone), old);
+    await c.user.updatePassword(pwAluno(a.phone, pin));
+    await db.doc("users/" + id).update({ pin: pin });
+    await sec.auth().signOut();
+    alert("PIN alterado com sucesso: " + pin);
+  } catch (e) {
+    alert("Não foi possível trocar o PIN: " + e.message);
+  } finally {
+    sec.delete();
+  }
+  render();
+}
+
+async function novoAluno() {
+  const n = $("nn").value.trim(), ph = fone($("np").value), pin = $("npin").value.trim();
+  if (!n || ph.length < 10) return alert("Preencha o nome e o telefone com DDD.");
+  if (!/^\d{4}$/.test(pin)) return alert("O PIN precisa ter 4 números.");
+
+  const sec = firebase.initializeApp(CFG, "sec" + Date.now());
+  try {
+    const c = await sec.auth().createUserWithEmailAndPassword(em(ph), pwAluno(ph, pin));
+    await db.doc("users/" + c.user.uid).set({ nome: n, phone: ph, pin: pin, role: "aluno", status: "ativo" });
+    await sec.auth().signOut();
+    alert("Aluno cadastrado com sucesso! PIN: " + pin + " (passe ao aluno)");
+  } catch (e) {
+    alert(e.code === "auth/email-already-in-use" ? "Esse telefone já está cadastrado." : "Erro: " + e.message);
+  } finally {
+    sec.delete();
+  }
+  render();
+}
+</script>
+</body>
+</html>

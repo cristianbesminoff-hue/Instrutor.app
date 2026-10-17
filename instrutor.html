@@ -53,19 +53,13 @@ h1 {
   font-weight: 800;
 }
 
-nav {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
+nav { display: flex; gap: 8px; margin-bottom: 16px; }
 
 nav button {
   flex: 1;
   padding: 12px 6px;
   border: 1px solid var(--card-border);
   background: var(--card-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   color: var(--mut);
   border-radius: 14px;
   font-size: 14px;
@@ -92,7 +86,10 @@ nav button.on {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
+.card.alerta { border-color: var(--no); background: rgba(239, 68, 68, 0.08); }
+
 h2 { font-size: 18px; margin: 0 0 12px; color: #fff; font-weight: 700; }
+h3 { font-size: 13px; margin: 14px 0 4px; color: var(--mut); font-weight: 700; text-transform: uppercase; letter-spacing: .4px; }
 label { display: block; font-size: 13px; color: var(--mut); margin: 10px 0 4px; font-weight: 500; }
 
 input, select {
@@ -115,7 +112,7 @@ input:focus, select:focus {
 }
 
 .row { display: flex; gap: 10px; }
-.row > * { flex: 1; }
+.row > * { flex: 1; min-width: 0; }
 
 .btn {
   width: 100%;
@@ -131,7 +128,7 @@ input:focus, select:focus {
   box-shadow: 0 6px 18px var(--pri-shadow);
   transition: all 0.2s ease;
 }
-
+.btn.sec { background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: none; }
 .btn:active { transform: scale(0.98); }
 
 .lnk {
@@ -143,6 +140,7 @@ input:focus, select:focus {
   cursor: pointer;
   font-weight: 600;
 }
+.lnk.red { color: var(--no); }
 
 .mut { color: var(--mut); font-size: 13px; }
 
@@ -154,8 +152,8 @@ input:focus, select:focus {
   border-bottom: 1px solid var(--card-border);
   gap: 10px;
 }
-
 .item:last-child { border-bottom: 0; }
+.item.col { flex-direction: column; align-items: stretch; }
 
 .tag {
   font-size: 11px;
@@ -164,9 +162,23 @@ input:focus, select:focus {
   font-weight: 700;
   text-transform: uppercase;
   color: #fff;
+  white-space: nowrap;
 }
 
 .x { background: none; border: 0; color: var(--no); font-size: 18px; cursor: pointer; font-weight: bold; }
+
+.ed input { padding: 8px 10px; font-size: 14px; }
+
+.modal { position: fixed; inset: 0; background: rgba(5,8,14,.92); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
+.modal .box { background: #121826; border: 1px solid var(--card-border); border-radius: 22px; max-width: 560px; width: 100%; max-height: 92vh; overflow-y: auto; padding: 18px; }
+
+.fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fotos figure { margin: 0; text-align: center; }
+.fotos img { width: 100%; border-radius: 14px; aspect-ratio: 3/4; object-fit: cover; background: #111; }
+.fotos figcaption { font-size: 12px; color: var(--mut); margin-top: 4px; }
+.thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+.thumbs img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; }
+.pill { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 10px; background: var(--input-bg); color: var(--mut); margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -191,10 +203,25 @@ let ME = null;
 
 const $ = i => document.getElementById(i);
 const today = (d = new Date()) => new Date(d.getTime() - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10);
-const esc = t => String(t == null ? "" : t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const esc = t => String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fone = t => String(t || "").replace(/\D/g, "").slice(-11);
 const em = ph => ph + "@academia.app";
 const pwAluno = (ph, pin) => "Tn@" + ph + "#" + pin + "#treino26";
+const r1 = v => Math.round(v * 10) / 10;
+const fmtDH = ts => new Date(ts).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+const fmtH = ts => new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+const dt = ts => new Date(ts).toLocaleDateString("pt-BR");
+
+function toast(m) {
+  let t = $("toast");
+  if (!t) {
+    t = document.createElement("div"); t.id = "toast";
+    t.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.15);z-index:200;font-size:14px;max-width:90%;text-align:center";
+    document.body.appendChild(t);
+  }
+  t.textContent = m; t.style.display = "block";
+  clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 3200);
+}
 
 // BANCO DE EXERCÍCIOS AMPLIADO
 const G = {
@@ -222,55 +249,149 @@ window.addEventListener("DOMContentLoaded", async () => {
     return;
   }
   ME = JSON.parse(ses);
-  PLAN = (await db.doc("plans/main").get()).data() || {};
+  try { PLAN = (await db.doc("plans/main").get()).data() || {}; } catch (e) { PLAN = {}; }
   render();
 });
 
-let PLAN = {}, tab = "al", curT = "A", curG = Object.keys(G)[0], ALU = [], LOGS = [];
+let PLAN = {}, tab = "al", curT = "A", curG = Object.keys(G)[0], curA = null;
+let ALU = [], LOGS = [], DIETS = [], ALERTAS = [], PEDIDOS = [], TRC = {}, FOT = [];
 const TR = ["A", "B", "C", "D", "E"];
 
 async function render() {
-  const T = [["al", "Alunos"], ["tr", "Treinos"], ["nu", "Nutri"]];
+  const T = [["al", "Alunos" + (ALERTAS.length ? " (" + ALERTAS.length + ")" : "")], ["tr", "Treinos"], ["nu", "Nutri"]];
   $("app").innerHTML = `<h1><span>📋 ${esc(ME.nome || "Instrutor")}</span><button class="lnk" onclick="sair()">Sair</button></h1><nav>${T.map(t => `<button class="${t[0] === tab ? "on" : ""}" onclick="tab='${t[0]}';render()">${t[1]}</button>`).join("")}</nav><div id="v"></div>`;
   if (tab === "al") await vAlunos();
-  else if (tab === "tr") vTreinos();
-  else $("v").innerHTML = '<div class="card"><h2>Nutricionista</h2><div class="mut">Em breve: cardápio personalizado por aluno.</div></div>';
+  else if (tab === "tr") await vTreinos();
+  else vNutri();
 }
 
+// ===== NUTRICIONISTA (em breve) =====
+function vNutri() {
+  $("v").innerHTML = `
+    <div class="card" style="text-align:center;padding:32px 18px">
+      <div style="font-size:56px">🥗</div>
+      <h2 style="margin-top:8px">Nutricionista</h2>
+      <span class="tag" style="background:var(--pri-gradient);padding:5px 12px">Em breve</span>
+      <p class="mut" style="margin-top:14px;font-size:14px">Em breve: cardápio personalizado por aluno, montado por um nutricionista e acompanhado aqui junto com o treino.</p>
+    </div>`;
+}
+
+// ===== ALUNOS =====
 async function vAlunos() {
   $("v").innerHTML = '<div class="mut">Carregando alunos…</div>';
-  const since = today(new Date(Date.now() - 14 * 864e5));
-  const [us, ls] = await Promise.all([
+  const since = today(new Date(Date.now() - 14 * 864e5)), t = today();
+  const safe = p => p.catch(e => { console.log(e); return null; });
+  const [us, ls, as, ds, ps, ts] = await Promise.all([
     db.collection("users").where("role", "==", "aluno").get(),
-    db.collection("logs").where("date", ">=", since).get()
+    db.collection("logs").where("date", ">=", since).get(),
+    safe(db.collection("alertas").where("lido", "==", false).get()),
+    safe(db.collection("dietas").where("date", "==", t).get()),
+    safe(db.collection("lgpd_pedidos").where("status", "==", "pendente").get()),
+    safe(db.collection("treinos").get())
   ]);
   ALU = us.docs.map(d => ({ id: d.id, ...d.data() }));
   LOGS = ls.docs.map(d => d.data());
+  ALERTAS = as ? as.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => b.ts - a.ts) : [];
+  DIETS = ds ? ds.docs.map(d => d.data()) : [];
+  PEDIDOS = ps ? ps.docs.map(d => ({ id: d.id, ...d.data() })) : [];
+  if (ts) ts.docs.forEach(d => { TRC[d.id] = d.data(); });
 
-  const t = today();
-  $("v").innerHTML = novoForm() + ALU.map(u => {
+  // atualiza o contador da aba sem recarregar
+  const nb = document.querySelector("nav button"); if (nb) nb.textContent = "Alunos" + (ALERTAS.length ? " (" + ALERTAS.length + ")" : "");
+
+  const alertasHtml = ALERTAS.length ? `<div class="card alerta">
+      <h2>⚠️ Alunos aumentaram a carga (${ALERTAS.length})</h2>
+      ${ALERTAS.map(a => `<div class="item"><div><b>${esc(a.aluno)}</b> · ${esc(a.exercicio)}
+        <div class="mut">Treino ${esc(a.treino)} · de ${esc(a.de || "-")} para <b style="color:#fff">${esc(a.para)}</b> · ${fmtDH(a.ts)}</div></div>
+        <button class="lnk" onclick="lerAlerta('${a.id}')">Ok</button></div>`).join("")}
+      <button class="btn sec" onclick="lerTodos()">Marcar todos como lidos</button>
+    </div>` : "";
+
+  const pedidosHtml = PEDIDOS.length ? `<div class="card alerta">
+      <h2>🔒 Pedidos de exclusão de dados (LGPD)</h2>
+      ${PEDIDOS.map(p => `<div class="item"><div><b>${esc(p.aluno)}</b><div class="mut">Pediu em ${esc(p.data || "")}</div></div>
+        <button class="lnk red" onclick="excluirDados('${esc(p.uid)}')">Excluir dados</button></div>`).join("")}
+    </div>` : "";
+
+  $("v").innerHTML = alertasHtml + pedidosHtml + novoForm() + ALU.map(u => {
     const mine = LOGS.filter(l => l.uid === u.id && ((l.done || []).length)).map(l => l.date).sort();
     const last = mine[mine.length - 1];
     const gap = last ? Math.floor((new Date(t) - new Date(last)) / 864e5) : null;
-    const lg = LOGS.find(l => l.uid === u.id && l.date === t) || { done: [], loads: {} };
+    const lgRaw = LOGS.find(l => l.uid === u.id && l.date === t) || {};
+    const lg = { done: lgRaw.done || [], loads: lgRaw.loads || {}, detalhe: lgRaw.detalhe || {} };
     const warn = gap === null || gap >= 3 ? `<span class="tag" style="background:var(--no)">${gap === null ? "nunca treinou" : "sem treinar há " + gap + " dias"}</span>` : "";
-    const pl = PLAN[u.hoje] || [];
+    const t0 = u.hoje || "A";
+    const tr = TRC[u.id] || {};
+    const pl = Array.isArray(tr[t0]) ? tr[t0] : [];
+    const feitos = pl.filter((e, i) => lg.done.includes(e.id || (t0 + "_" + i))).length;
+    const proprios = Object.values(lg.detalhe).filter(d => d && d.proprio);
+    const dieta = DIETS.find(d => d.uid === u.id);
+    let dietaTxt = '<span class="mut">sem registro hoje</span>';
+    if (dieta && Array.isArray(dieta.itens) && dieta.itens.length) {
+      const s = dieta.itens.reduce((a, x) => ({ k: a.k + x.k, p: a.p + x.p, c: a.c + x.c, f: a.f + x.f }), { k: 0, p: 0, c: 0, f: 0 });
+      dietaTxt = `<b>${Math.round(s.k)}</b> kcal · P ${r1(s.p)}g · C ${r1(s.c)}g · G ${r1(s.f)}g`;
+    }
+    const lgpdTag = u.lgpd && u.lgpd.aceito ? '<span class="pill">✔ LGPD</span>' : '<span class="pill" style="color:#f08c00">⚠ sem aceite LGPD</span>';
+    const nAl = ALERTAS.filter(a => a.uid === u.id).length;
 
     return `<div class="card">
       <h2>${esc(u.nome)} ${stt(u)} ${warn}</h2>
-      <div class="mut">${esc(u.phone)} · PIN ${esc(u.pin || "sem PIN")}${u.peso ? ` · ${u.peso} kg · ${u.alt} cm · ${u.obj === "perder" ? "perder peso" : "ganhar massa"} · ${u.dias || "?"} dias/sem` : " · sem perfil"}</div>
-      ${pl.length ? `<div class="mut" style="margin:8px 0 4px">Treino ${esc(u.hoje)}</div>` + pl.map(e => {
-        const ok = lg.done.includes(e.id);
-        return `<div class="item ex ${ok ? "ok" : ""}"><div><b>${esc(e.n)}</b>${lg.loads[e.id] ? `<div class="mut">${esc(lg.loads[e.id])}</div>` : ""}</div><span class="tag" style="background:var(--${ok ? "ok" : "no"})">${ok ? "Feito" : "Pendente"}</span></div>`;
-      }).join("") : '<div class="mut" style="margin-top:6px">Ainda não escolheu treino.</div>'}
+      <div class="mut">${esc(u.phone)} · PIN ${esc(u.pin || "sem PIN")}${u.peso ? ` · ${u.peso} kg · ${u.alt} cm · ${u.obj === "perder" ? "perder peso" : "ganhar massa"} · ${u.dias || "?"} dias/sem` : " · sem perfil"} ${lgpdTag}</div>
+      ${nAl ? `<div style="margin-top:6px"><span class="tag" style="background:var(--no)">${nAl} aumento${nAl > 1 ? "s" : ""} de carga</span></div>` : ""}
+
+      <h3>Treino ${esc(t0)} de hoje · ${feitos}/${pl.length} feitos</h3>
+      ${pl.length ? pl.map((e, i) => {
+        const id = e.id || (t0 + "_" + i), ok = lg.done.includes(id), det = lg.detalhe[id];
+        return `<div class="item"><div><b>${esc(e.n)}</b>
+          <div class="mut">${esc(e.s || "-")}x${esc(e.r || "-")} · carga ${esc(e.carga || "-")}${ok && det && det.ts ? " · feito às " + fmtH(det.ts) : ""}</div></div>
+          <span class="tag" style="background:var(--${ok ? "ok" : "no"})">${ok ? "Feito" : "Pendente"}</span></div>`;
+      }).join("") : `<div class="mut">Nenhum exercício cadastrado no treino ${esc(t0)} para este aluno.</div>`}
+
+      ${proprios.length ? `<h3>Treino próprio de hoje</h3>` + proprios.map(d => `<div class="item"><div><b>${esc(d.n)}</b>
+          <div class="mut">${esc(d.s || "-")}x${esc(d.r || "-")} · carga ${esc(d.carga || "-")} · ${d.ts ? fmtH(d.ts) : ""}</div></div><span class="tag" style="background:#6366f1">Próprio</span></div>`).join("") : ""}
+
+      <h3>Dieta de hoje</h3>
+      <div class="mut">🍎 ${dietaTxt}</div>
       ${ctl(u)}
     </div>`;
   }).join("") || '<div class="card mut">Nenhum aluno cadastrado.</div>';
+
+  $("v").insertAdjacentHTML("beforeend", `<div class="card mut" style="font-size:12px">🔒 <b>LGPD:</b> você trata dados pessoais e de saúde dos alunos (peso, fotos, alimentação). Use apenas para o acompanhamento do treino, não compartilhe com terceiros e atenda os pedidos de acesso, correção e exclusão feitos por eles.</div>`);
 }
 
-function vTreinos() {
-  const l = PLAN[curT] || [];
+async function lerAlerta(id) {
+  try { await db.doc("alertas/" + id).update({ lido: true }); } catch (e) { console.log(e); toast("Não foi possível marcar."); }
+  render();
+}
+async function lerTodos() {
+  try {
+    const b = db.batch();
+    ALERTAS.forEach(a => b.update(db.doc("alertas/" + a.id), { lido: true }));
+    await b.commit();
+  } catch (e) { console.log(e); toast("Não foi possível marcar."); }
+  render();
+}
+
+// ===== TREINOS POR ALUNO =====
+async function vTreinos() {
+  $("v").innerHTML = '<div class="mut">Carregando…</div>';
+  if (!ALU.length) {
+    const us = await db.collection("users").where("role", "==", "aluno").get();
+    ALU = us.docs.map(d => ({ id: d.id, ...d.data() }));
+  }
+  if (!ALU.length) { $("v").innerHTML = '<div class="card mut">Cadastre um aluno primeiro na aba Alunos.</div>'; return; }
+  if (!curA || !ALU.find(a => a.id === curA)) curA = ALU[0].id;
+  if (!TRC[curA]) {
+    const s = await db.doc("treinos/" + curA).get();
+    TRC[curA] = s.exists ? s.data() : {};
+  }
+  const aluno = ALU.find(a => a.id === curA), tr = TRC[curA];
+  const l = Array.isArray(tr[curT]) ? tr[curT] : [];
+  const temPlano = TR.some(t => Array.isArray(PLAN[t]) && PLAN[t].length);
+
   $("v").innerHTML = `<div class="card">
+    <label style="margin-top:0">Aluno</label>
+    <select onchange="curA=this.value;render()">${ALU.map(a => `<option value="${a.id}" ${a.id === curA ? "selected" : ""}>${esc(a.nome)}</option>`).join("")}</select>
     <label>Treino</label>
     <select onchange="curT=this.value;render()">${TR.map(t => `<option ${t === curT ? "selected" : ""}>${t}</option>`).join("")}</select>
     <label>Grupo muscular</label>
@@ -280,29 +401,149 @@ function vTreinos() {
     <div class="row">
       <div><label>Séries</label><input id="se" type="number" value="3"></div>
       <div><label>Repetições</label><input id="rp" value="12"></div>
+      <div><label>Carga</label><input id="cg" placeholder="ex: 20kg"></div>
     </div>
     <label>Link do GIF/imagem de execução (opcional)</label>
     <input id="gf" placeholder="https://...">
-    <button class="btn" onclick="addE()">Adicionar ao treino ${curT}</button>
+    <button class="btn" onclick="addE()">Adicionar ao treino ${curT} de ${esc(aluno.nome)}</button>
   </div>
   <div class="card">
-    <h2>Treino ${curT}</h2>
-    ${l.map(e => `<div class="item"><div><b>${esc(e.n)}</b><div class="mut">${esc(e.g)} ·${esc(e.s)}x${esc(e.r)}${e.gif ? " · 🎞" : ""}</div></div><button class="x" onclick="delE('${e.id}')">✕</button></div>`).join("") || '<span class="mut">Sem exercícios cadastrados.</span>'}
-  </div>`;
+    <h2>Treino ${curT} · ${esc(aluno.nome)}</h2>
+    ${l.map(e => `<div class="item col ed">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <div><b>${esc(e.n)}</b><div class="mut">${esc(e.g)}${e.gif ? " · 🎞" : ""}</div></div>
+          <button class="x" onclick="delE('${e.id}')">✕</button>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <input type="number" value="${esc(e.s)}" placeholder="Séries" onchange="editE('${e.id}','s',this.value)">
+          <input value="${esc(e.r)}" placeholder="Reps" onchange="editE('${e.id}','r',this.value)">
+          <input value="${esc(e.carga || "")}" placeholder="Carga" onchange="editE('${e.id}','carga',this.value)">
+        </div>
+      </div>`).join("") || '<span class="mut">Sem exercícios cadastrados para este aluno neste treino.</span>'}
+  </div>
+  ${temPlano ? `<div class="card"><h2>Plano geral antigo</h2><div class="mut">Existe um plano geral (A–E) cadastrado antes. Você pode copiá-lo para este aluno e depois ajustar.</div>
+    <button class="btn sec" onclick="copiarPlano()">Copiar plano geral para ${esc(aluno.nome)}</button></div>` : ""}`;
+}
+
+// Lê o treino atual do aluno no servidor (evita sobrescrever a carga que o aluno acabou de mudar)
+async function treinoFresco() {
+  const s = await db.doc("treinos/" + curA).get();
+  TRC[curA] = s.exists ? s.data() : {};
+  return TRC[curA];
+}
+async function gravarTreino(t, arr) {
+  TRC[curA][t] = arr;
+  await db.doc("treinos/" + curA).set({ [t]: arr }, { merge: true });
 }
 
 async function addE() {
-  (PLAN[curT] = PLAN[curT] || []).push({ id: "e" + Date.now(), n: $("en").value, g: curG, s: $("se").value, r: $("rp").value, gif: $("gf").value.trim() });
-  await db.doc("plans/main").set(PLAN);
+  try {
+    const tr = await treinoFresco();
+    const arr = Array.isArray(tr[curT]) ? tr[curT].slice() : [];
+    arr.push({ id: "e" + Date.now(), n: $("en").value, g: curG, s: $("se").value, r: $("rp").value, carga: $("cg").value.trim(), gif: $("gf").value.trim() });
+    await gravarTreino(curT, arr);
+    toast("Exercício adicionado");
+  } catch (e) { console.log(e); alert("Não foi possível salvar: " + e.message); }
   render();
+}
+
+async function editE(id, campo, val) {
+  try {
+    const tr = await treinoFresco();
+    const arr = Array.isArray(tr[curT]) ? tr[curT].slice() : [];
+    const e = arr.find(x => x.id === id); if (!e) return;
+    e[campo] = String(val).trim();
+    await gravarTreino(curT, arr);
+    toast("Salvo");
+  } catch (e) { console.log(e); alert("Não foi possível salvar: " + e.message); }
 }
 
 async function delE(id) {
-  PLAN[curT] = PLAN[curT].filter(e => e.id !== id);
-  await db.doc("plans/main").set(PLAN);
+  if (!confirm("Remover este exercício do treino do aluno?")) return;
+  try {
+    const tr = await treinoFresco();
+    const arr = (Array.isArray(tr[curT]) ? tr[curT] : []).filter(e => e.id !== id);
+    await gravarTreino(curT, arr);
+  } catch (e) { console.log(e); alert("Não foi possível remover: " + e.message); }
   render();
 }
 
+async function copiarPlano() {
+  const a = ALU.find(x => x.id === curA);
+  if (!confirm("Copiar o plano geral para " + a.nome + "? Isso substitui os treinos que ele já tem nas letras copiadas.")) return;
+  try {
+    const dados = {};
+    TR.forEach(t => {
+      if (Array.isArray(PLAN[t]) && PLAN[t].length) dados[t] = PLAN[t].map(e => ({ ...e, carga: e.carga || "" }));
+    });
+    await db.doc("treinos/" + curA).set(dados, { merge: true });
+    TRC[curA] = { ...(TRC[curA] || {}), ...dados };
+    toast("Plano copiado");
+  } catch (e) { console.log(e); alert("Não foi possível copiar: " + e.message); }
+  render();
+}
+
+// ===== FOTOS DE EVOLUÇÃO DO ALUNO =====
+async function verFotos(id) {
+  const a = ALU.find(x => x.id === id) || {};
+  toast("Carregando fotos...");
+  try {
+    const q = await db.collection("fotos").where("uid", "==", id).get();
+    FOT = q.docs.map(d => ({ id: d.id, ...d.data() })).sort((x, y) => x.ts - y.ts);
+  } catch (e) { console.log(e); return alert("Não foi possível carregar as fotos."); }
+  const m = document.createElement("div");
+  m.className = "modal"; m.id = "fotom";
+  m.innerHTML = `<div class="box"><h2>📸 ${esc(a.nome)}</h2>
+    ${FOT.length ? `
+      ${FOT.length > 1 ? `<div class="row">
+        <div><label style="margin-top:0">Antes</label><select id="fa" onchange="compFoto()">${FOT.map((f, i) => `<option value="${i}" ${i === 0 ? "selected" : ""}>${dt(f.ts)}</option>`).join("")}</select></div>
+        <div><label style="margin-top:0">Depois</label><select id="fb" onchange="compFoto()">${FOT.map((f, i) => `<option value="${i}" ${i === FOT.length - 1 ? "selected" : ""}>${dt(f.ts)}</option>`).join("")}</select></div>
+      </div>` : '<div class="mut">Só há uma foto até agora.</div>'}
+      <div id="comp" style="margin-top:10px"></div>
+      <h3>Histórico</h3><div class="thumbs">${FOT.map(f => `<div><img src="${f.img}" alt=""><div class="mut" style="font-size:11px;text-align:center">${dt(f.ts)}</div></div>`).join("")}</div>
+    ` : '<div class="mut">Este aluno ainda não enviou fotos.</div>'}
+    <button class="btn" onclick="$('fotom').remove()">Fechar</button></div>`;
+  document.body.appendChild(m);
+  if (FOT.length) compFoto();
+}
+
+function compFoto() {
+  const a = FOT[$("fa") ? +$("fa").value : 0], b = FOT[$("fb") ? +$("fb").value : FOT.length - 1];
+  const fig = (f, t) => `<figure><img src="${f.img}" alt=""><figcaption><b>${t}</b> · ${dt(f.ts)}${f.peso ? " · " + f.peso + " kg" : ""}</figcaption></figure>`;
+  let dif = "";
+  if (a !== b && a.peso && b.peso) {
+    const d = r1(b.peso - a.peso);
+    dif = `<div class="mut" style="text-align:center;margin-top:8px">Variação de peso: <b style="color:#fff">${d > 0 ? "+" : ""}${d} kg</b> em ${Math.max(0, Math.round((b.ts - a.ts) / 864e5))} dias</div>`;
+  }
+  $("comp").innerHTML = `<div class="fotos">${fig(a, "Antes")}${a === b ? "" : fig(b, "Depois")}</div>${dif}`;
+}
+
+// ===== LGPD: EXCLUSÃO DE DADOS DO ALUNO =====
+async function excluirDados(id) {
+  const a = ALU.find(x => x.id === id) || { nome: "este aluno" };
+  if (!confirm("Excluir TODOS os dados de " + a.nome + " (treinos, fotos, dieta, registros e cadastro)? Não dá para desfazer.")) return;
+  if (!confirm("Confirma a exclusão definitiva dos dados de " + a.nome + "?")) return;
+  try {
+    for (const c of ["fotos", "logs", "alertas", "dietas"]) {
+      const q = await db.collection(c).where("uid", "==", id).get();
+      for (let i = 0; i < q.docs.length; i += 400) {
+        const b = db.batch();
+        q.docs.slice(i, i + 400).forEach(d => b.delete(d.ref));
+        await b.commit();
+      }
+    }
+    await db.doc("treinos/" + id).delete();
+    await db.doc("treinos_aluno/" + id).delete();
+    const ped = await db.collection("lgpd_pedidos").where("uid", "==", id).get();
+    for (const d of ped.docs) await d.ref.update({ status: "concluido", concluidoEm: Date.now() });
+    await db.doc("users/" + id).delete();
+    delete TRC[id];
+    alert("Dados apagados do sistema.\n\nFalta um passo manual: no Firebase Console, vá em Authentication e remova o login deste aluno (telefone@academia.app).");
+  } catch (e) { console.log(e); alert("Não foi possível excluir tudo: " + e.message); }
+  render();
+}
+
+// ===== CADASTRO E CONTROLE DE ALUNOS =====
 const rnd = () => String(Math.floor(1000 + Math.random() * 9000));
 const novoForm = () => `<div class="card">
   <h2>Novo Aluno</h2>
@@ -317,17 +558,22 @@ const novoForm = () => `<div class="card">
 </div>`;
 
 const stt = u => {
-  const s = u.status || "ativo", c = { ativo: "var(--ok)", pausado: "#f08c00", bloqueado: "var(--no)" }[s];
-  return `<span class="tag" style="background:${c}">${s}</span>`;
+  const s = u.status || "ativo", c = { ativo: "var(--ok)", pausado: "#f08c00", bloqueado: "var(--no)" }[s] || "var(--mut)";
+  return `<span class="tag" style="background:${c}">${esc(s)}</span>`;
 };
 
 const ctl = u => `<div class="row" style="margin-top:10px;flex-wrap:wrap">
+  <button class="lnk" onclick="irTreino('${u.id}')">📋 Treino</button>
+  <button class="lnk" onclick="verFotos('${u.id}')">📸 Fotos</button>
   <button class="lnk" onclick="setSt('${u.id}','ativo')">Ativar</button>
   <button class="lnk" onclick="setSt('${u.id}','pausado')">Pausar</button>
   <button class="lnk" onclick="setSt('${u.id}','bloqueado')">Bloquear</button>
   <button class="lnk" onclick="edNome('${u.id}')">Editar Nome</button>
   <button class="lnk" onclick="novoPin('${u.id}')">Novo PIN</button>
+  <button class="lnk red" onclick="excluirDados('${u.id}')">Excluir dados</button>
 </div>`;
+
+function irTreino(id) { curA = id; tab = "tr"; render(); window.scrollTo(0, 0); }
 
 async function setSt(id, s) {
   await db.doc("users/" + id).update({ status: s });
@@ -347,7 +593,7 @@ async function novoPin(id) {
   if (p === null) return;
   const pin = p.trim();
   if (!/^\d{4}$/.test(pin)) return alert("O PIN precisa ter 4 números.");
-  
+
   const sec = firebase.initializeApp(CFG, "sec" + Date.now());
   try {
     const old = a.pin ? pwAluno(a.phone, a.pin) : "Tn@" + a.phone + "#treino26";

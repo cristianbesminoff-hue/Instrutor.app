@@ -3,180 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Treinô - Acesso do Instrutor</title>
-
-<!-- PWA Manifest & Theme -->
+<title>Treinô - Instrutor</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#ff6a1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- Firebase SDK Compat -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-
 <style>
-:root {
-  --bg: #0b0f17;
-  --card-bg: rgba(255, 255, 255, 0.05);
-  --card-border: rgba(255, 255, 255, 0.12);
-  --tx: #f8fafc;
-  --mut: #94a3b8;
-  --pri: #ff6a1a;
-  --pri-gradient: linear-gradient(135deg, #ff6a1a 0%, #ff3b00 100%);
-  --pri-shadow: rgba(255, 106, 26, 0.35);
-  --input-bg: rgba(255, 255, 255, 0.07);
-  --ok: #22c55e;
-  --no: #ef4444;
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0 auto;
-  background: var(--bg);
-  color: var(--tx);
-  font: 16px/1.4 system-ui, -apple-system, sans-serif;
-  max-width: 450px;
-  padding: 24px 16px;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.card {
-  width: 100%;
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--card-border);
-  border-radius: 22px;
-  padding: 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-  text-align: center;
-}
-
-h1 {
-  font-size: 26px;
-  margin: 0 0 8px;
-  color: #fff;
-  font-weight: 800;
-}
-
-p.sub {
-  color: var(--mut);
-  font-size: 14px;
-  margin-bottom: 24px;
-}
-
-label {
-  display: block;
-  text-align: left;
-  font-size: 13px;
-  color: var(--mut);
-  margin: 14px 0 6px;
-  font-weight: 500;
-}
-
-input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  background: var(--input-bg);
-  color: var(--tx);
-  font-size: 16px;
-  outline: none;
-  text-align: center;
-  letter-spacing: 2px;
-  transition: all 0.3s ease;
-}
-
-input:focus {
-  border-color: var(--pri);
-  box-shadow: 0 0 10px var(--pri-shadow);
-}
-
-.btn {
-  width: 100%;
-  margin-top: 20px;
-  padding: 14px;
-  border: 0;
-  border-radius: 14px;
-  background: var(--pri-gradient);
-  color: #fff;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 6px 18px var(--pri-shadow);
-  transition: all 0.2s ease;
-}
-
-.btn:active { transform: scale(0.98); }
-
-.mut {
-  color: var(--mut);
-  font-size: 12px;
-  margin-top: 16px;
-}
+:root { --bg:#0b0f17; --card-bg:rgba(255,255,255,.05); --card-border:rgba(255,255,255,.12); --tx:#f8fafc; --mut:#94a3b8; --pri-gradient:linear-gradient(135deg,#ff6a1a 0%,#ff3b00 100%); --pri-shadow:rgba(255,106,26,.35); --input-bg:rgba(255,255,255,.07); }
+* { box-sizing:border-box; }
+body { margin:0 auto; background:var(--bg); color:var(--tx); font:16px/1.4 system-ui,-apple-system,sans-serif; max-width:500px; padding:20px; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+.card { background:var(--card-bg); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid var(--card-border); border-radius:28px; padding:28px 24px; width:100%; box-shadow:0 20px 40px rgba(0,0,0,.5); }
+h1 { font-size:28px; margin:0 0 24px; text-align:center; color:#fff; font-weight:800; }
+h2 { font-size:18px; margin:0 0 16px; text-align:center; color:#e2e8f0; font-weight:600; }
+label { display:block; font-size:13px; color:var(--mut); margin:14px 0 6px; font-weight:500; }
+input { width:100%; padding:14px 16px; border:1px solid var(--card-border); border-radius:16px; background:var(--input-bg); color:#fff; font-size:16px; outline:none; text-transform:uppercase; letter-spacing:1px; }
+input:focus { border-color:#ff6a1a; box-shadow:0 0 12px var(--pri-shadow); }
+.btn { width:100%; margin-top:24px; padding:16px; border:0; border-radius:18px; background:var(--pri-gradient); color:#fff; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 8px 24px var(--pri-shadow); }
+.btn:disabled { opacity:.6; }
+.mut { color:var(--mut); font-size:13px; text-align:center; margin-top:18px; }
 </style>
 </head>
 <body>
-
 <div class="card">
-  <h1>🏋️ Treinô</h1>
-  <p class="sub">Portal Exclusivo para Instrutores</p>
-  
-  <label>Chave Única de Acesso</label>
-  <input id="chave" type="text" placeholder="EX: INST-XXXX" autocomplete="off">
-  
-  <button class="btn" onclick="entrarInstrutor()">Entrar no Painel</button>
-  
-  <div class="mut">Insira a chave autorizada pelo Administrador Master.</div>
+  <h1>📋 Treinô Instrutor</h1>
+  <h2>Entrar com a sua chave</h2>
+  <label>Chave de acesso</label>
+  <input id="chave" placeholder="INST-XXXXXXXX" autocomplete="off" autocapitalize="characters">
+  <button class="btn" id="btn" onclick="entrar()">Entrar</button>
+  <div class="mut">Não tem chave? Fale com o administrador.</div>
 </div>
-
 <script>
-// Registo do Service Worker para PWA
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(err => console.log('SW erro: ', err));
-}
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(e => console.log('SW erro: ', e));
 
-// Configuração do Firebase
 const CFG = {
   apiKey: "AIzaSyCsidHGMxmF_OGqxZGeweUS6UCF_OViIvc",
   authDomain: "treino-app-787d7.firebaseapp.com",
   projectId: "treino-app-787d7",
   appId: "1:816237967715:web:96f923e22a8b4ed2e73b56"
 };
-
 firebase.initializeApp(CFG);
-const db = firebase.firestore();
+const auth = firebase.auth(), db = firebase.firestore();
+const $ = i => document.getElementById(i);
 
-async function entrarInstrutor() {
-  const chave = document.getElementById("chave").value.trim().toUpperCase();
-  if (!chave) return alert("Por favor, digite a sua chave de acesso.");
+const normKey = k => String(k || "").trim().toUpperCase().replace(/\s/g, "");
+const instEmail = k => normKey(k).toLowerCase().replace(/[^a-z0-9]/g, "") + "@instrutor.app";
+const instPass = k => "Tn@" + normKey(k) + "#inst26";
 
+// Ja logado? Valida e vai direto pro painel
+auth.onAuthStateChanged(async u => {
+  if (!u) return;
   try {
-    const query = await db.collection("chaves_instrutores").where("chave", "==", chave).where("ativo", "==", true).get();
-    
-    if (query.empty) {
-      alert("Chave inválida ou desativada pelo Administrador.");
-      return;
+    const s = await db.doc("users/" + u.uid).get();
+    const d = s.exists ? s.data() : null;
+    if (!d || d.role !== "instrutor") { await auth.signOut(); return; }
+    if (d.status !== "ativo") {
+      alert("Seu acesso está " + (d.status || "bloqueado") + ". Fale com o administrador.");
+      await auth.signOut(); resetBtn(); return;
     }
+    window.location.replace("instrutor.html");
+  } catch (e) { console.log(e); resetBtn(); }
+});
 
-    const dadosInstrutor = query.docs[0].data();
-    
-    localStorage.setItem("treino_instrutor", JSON.stringify(dadosInstrutor));
-    window.location.href = "instrutor.html";
+function resetBtn() { $("btn").disabled = false; $("btn").textContent = "Entrar"; }
 
-  } catch (e) {
-    alert("Erro ao validar chave: " + e.message);
-  }
+async function entrar() {
+  const k = normKey($("chave").value);
+  if (!/^INST-[A-Z0-9]{8,}$/.test(k)) return alert("Digite a chave completa (ex: INST-K7M2Q9XA).");
+  $("btn").disabled = true; $("btn").textContent = "Entrando...";
+  try { await auth.signInWithEmailAndPassword(instEmail(k), instPass(k)); }
+  catch (e) { resetBtn(); alert("Chave inválida ou revogada."); }
 }
 </script>
-
 </body>
 </html>

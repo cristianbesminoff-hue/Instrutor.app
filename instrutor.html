@@ -226,16 +226,23 @@ function toast(m) {
 
 // BANCO DE EXERCÍCIOS AMPLIADO
 const G = {
-  "Peito": "Supino Reto com Barra|Supino Reto com Halteres|Supino Inclinado com Barra|Supino Inclinado com Halteres|Supino Declinado com Barra|Supino Declinado com Halteres|Supino na Máquina Articulada|Crucifixo Reto com Halteres|Crucifixo Inclinado com Halteres|Crucifixo na Polia (Crossover Alto)|Crossover Médio na Polia|Crossover Baixo na Polia|Peck Deck / Voador|Flexão de Braço Tradicional|Flexão de Braço Inclinada|Paralelas para Peito (Chest Dips)|Pull-over com Halter",
-  "Costas": "Puxada Alta Frontal (Pegada Aberta)|Puxada Alta Supinada (Pegada Fechada)|Puxada Alta Neutra|Remada Curvada com Barra|Remada Curvada com Halteres|Remada Baixa na Polia (Triângulo)|Remada Unilateral com Halter (Serrote)|Remada Articulada|Remada T (Cavalo)|Pulldown na Polia Alta|Barra Fixa (Pronada)|Barra Fixa (Supinada)|Levantamento Terra|Crucifixo Invertido na Polia|Crucifixo Invertido com Halteres|Peck Deck Invertido|Puxada Articulada Unilateral",
-  "Quadríceps": "Agachamento Livre com Barra|Agachamento Guiado (Smith)|Agachamento Frontal|Leg Press 45°|Leg Press Horizontal|Cadeira Extensora|Agachamento Búlgaro com Halteres|Afundo com Halteres|Passada em Deslocamento|Agachamento Hack|Agachamento Sissy (Sissy Squat)|Subida no Banco (Step-up)",
-  "Posterior / Isquiotibiais": "Mesa Flexora|Cadeira Flexora|Stiff com Barra|Stiff com Halteres|Levantamento Terra Romeno (RDL)|Flexor Vertical Unilateral|Bom Dia (Good Morning)|Flexão de Pernas na Bola Suíça",
-  "Ombros": "Desenvolvimento com Barra Frontal|Desenvolvimento com Halteres|Desenvolvimento Arnold|Desenvolvimento na Máquina Articulada|Elevação Lateral com Halteres|Elevação Lateral na Polia|Elevação Lateral na Máquina|Elevação Frontal com Halteres|Elevação Frontal com Barra|Elevação Frontal na Polia|Elevação Frontal com Anilha|Remada Alta com Barra|Remada Alta na Polia|Encolhimento de Ombros com Barra|Encolhimento de Ombros com Halteres",
-  "Bíceps": "Rosca Direta com Barra Reta|Rosca Direta com Barra W|Rosca Alternada com Halteres|Rosca Martelo com Halteres|Rosca Martelo na Polia (Corda)|Rosca Concentrada com Halter|Rosca Scott com Barra W|Rosca Scott Unilateral com Halter|Rosca Scott na Máquina|Rosca Inclinada com Halteres|Rosca na Polia Alta (Duplo Bíceps)|Rosca Inversa com Barra",
-  "Tríceps": "Tríceps Pulley (Barra Reta)|Tríceps Pulley (Barra V)|Tríceps Corda na Polia|Tríceps Testa com Barra W|Tríceps Testa com Halteres|Tríceps Francês Unilateral com Halter|Tríceps Francês com Barra W|Tríceps Coice com Halter|Tríceps Coice na Polia|Tríceps nas Paralelas|Tríceps no Banco|Supino Fechado",
-  "Panturrilhas": "Gêmeos em Pé na Máquina|Gêmeos Sentado (Cavalinho)|Gêmeos no Leg Press 45°|Gêmeos em Pé Unilateral com Halter|Panturrilha no Agachamento Hack",
-  "Glúteos": "Elevação Pélvica com Barra|Elevação Pélvica na Máquina|Cadeira Abdutora|Glúteo na Polia (Extension/Kickback)|Glúteo Quatro Apoios|Agachamento Sumo com Halter|Afundo Búlgaro Focado em Glúteo",
-  "Core / Abdómen": "Abdominal Infra no Banco|Abdominal Infra na Paralela|Abdominal Supra Curto|Abdominal Supra na Polia|Abdominal Obliquo Deitado|Abdominal Obliquo na Polia|Prancha Isométrica|Prancha Lateral|Abdominal na Roda (Ab Roller)|Vacuum Abdominal"
+  "Peito": "Supino Reto com Barra|Supino Reto com Halteres|Supino Reto na Máquina (Chest Press)|Supino Reto no Smith|Supino Inclinado com Barra|Supino Inclinado com Halteres|Supino Inclinado na Máquina|Supino Inclinado no Smith|Supino Declinado com Barra|Supino Declinado com Halteres|Supino Declinado na Máquina|Supino com Pegada Neutra com Halteres|Supino Fechado com Barra|Supino com Elástico|Voador na Máquina (Peck Deck)|Voador Unilateral na Máquina|Voador Inclinado na Máquina|Crucifixo Reto com Halteres|Crucifixo Inclinado com Halteres|Crucifixo Declinado com Halteres|Crucifixo na Máquina|Crucifixo Deitado na Polia|Crossover Alto na Polia|Crossover Médio na Polia|Crossover Baixo na Polia|Crossover Unilateral na Polia|Press Convergente na Máquina|Flexão de Braço no Solo|Flexão de Braço com Joelhos Apoiados|Flexão de Braço com Pés Elevados|Flexão de Braço com Mãos Elevadas|Flexão Diamante|Flexão com Palmas (Pliométrica)|Paralelas para Peito (Mergulho)|Pull-over com Halter|Pull-over na Polia|Svend Press (Press com Anilha)|Press Landmine",
+  "Costas": "Puxada Frontal Pegada Aberta|Puxada Frontal Pegada Supinada|Puxada Frontal Pegada Neutra (Triângulo)|Puxada Frontal Unilateral na Polia|Puxada Atrás da Nuca|Puxada Alta na Máquina|Pulldown com Braços Estendidos (Corda)|Pulldown com Braços Estendidos (Barra)|Barra Fixa Pronada|Barra Fixa Supinada (Chin-up)|Barra Fixa Neutra|Barra Fixa Assistida na Máquina|Remada Curvada com Barra|Remada Curvada com Barra Supinada|Remada Curvada com Halteres|Remada Unilateral com Halter (Serrote)|Remada Cavalinho (Barra T)|Remada Baixa com Triângulo|Remada Baixa com Barra Reta|Remada Baixa Unilateral na Polia|Remada Sentada na Máquina (Pegada Neutra)|Remada Sentada na Máquina (Pegada Aberta)|Remada com Peito Apoiado na Máquina|Remada Articulada Unilateral|Remada no Smith|Remada Invertida (Australiana)|Remada com Elástico|Levantamento Terra Convencional|Levantamento Terra Sumô|Voador Invertido na Máquina|Crucifixo Invertido com Halteres|Crucifixo Invertido na Polia|Pull-over na Máquina|Encolhimento com Remada (Remada Alta Curta)",
+  "Ombros": "Desenvolvimento com Barra Frontal|Desenvolvimento Militar em Pé|Desenvolvimento com Halteres Sentado|Desenvolvimento com Halteres em Pé|Desenvolvimento Arnold|Desenvolvimento na Máquina|Desenvolvimento no Smith|Elevação Lateral com Halteres|Elevação Lateral na Polia (Unilateral)|Elevação Lateral na Máquina|Elevação Lateral Inclinada (Deitado de Lado)|Elevação Lateral com Elástico|Elevação Frontal com Halteres|Elevação Frontal com Barra|Elevação Frontal na Polia (Corda)|Elevação Frontal com Anilha|Crucifixo Inverso com Halteres (Deltoide Posterior)|Voador Invertido na Máquina (Deltoide Posterior)|Face Pull na Polia|Remada Alta com Barra|Remada Alta com Halteres|Remada Alta na Polia|Elevação em Y|Rotação Externa com Halter|Rotação Externa na Polia|Press Landmine Unilateral",
+  "Trapézio": "Encolhimento com Barra|Encolhimento com Halteres|Encolhimento no Smith|Encolhimento na Máquina|Encolhimento na Polia|Encolhimento Atrás do Corpo|Remada Alta com Barra (Trapézio)|Face Pull (Trapézio Médio)|Farmer Walk (Caminhada do Fazendeiro)",
+  "Bíceps": "Rosca Direta com Barra Reta|Rosca Direta com Barra W|Rosca Direta na Polia Baixa|Rosca Alternada com Halteres|Rosca Simultânea com Halteres|Rosca Martelo com Halteres|Rosca Martelo Cruzada|Rosca Martelo na Polia (Corda)|Rosca Concentrada com Halter|Rosca Scott com Barra W|Rosca Scott com Halter Unilateral|Rosca Scott na Máquina|Rosca Inclinada com Halteres|Rosca Spider|Rosca 21|Rosca Bayesian na Polia|Rosca Unilateral na Polia|Rosca Duplo Bíceps na Polia Alta|Rosca na Máquina|Rosca Inversa com Barra|Rosca Zottman|Rosca com Elástico",
+  "Tríceps": "Tríceps Pulley com Barra Reta|Tríceps Pulley com Barra V|Tríceps Pulley com Corda|Tríceps Pulley Unilateral (Pegada Supinada)|Tríceps Testa com Barra W|Tríceps Testa com Halteres|Tríceps Testa na Polia|Tríceps Francês com Halter (Duas Mãos)|Tríceps Francês Unilateral com Halter|Tríceps Francês com Barra W|Tríceps Francês na Polia com Corda|Tríceps Coice com Halter|Tríceps Coice na Polia|Tríceps nas Paralelas|Tríceps no Banco (Mergulho)|Tríceps na Máquina (Extensão)|Tríceps com Elástico|Supino Fechado (Tríceps)|Flexão Diamante (Tríceps)",
+  "Antebraço": "Rosca de Punho com Barra|Rosca de Punho com Halteres|Rosca de Punho Inversa com Barra|Rosca Inversa com Barra|Rosca Martelo (Antebraço)|Rolo de Punho (Wrist Roller)|Pegada Estática na Barra (Dead Hang)|Farmer Walk (Antebraço)|Pinça com Anilhas",
+  "Quadríceps": "Agachamento Livre com Barra|Agachamento Frontal|Agachamento no Smith|Agachamento Hack na Máquina|Agachamento Pendulum|Agachamento Búlgaro com Halteres|Agachamento Búlgaro no Smith|Agachamento com Halter (Goblet)|Agachamento Sissy|Agachamento no Banco (Box Squat)|Agachamento Pistol (Unilateral)|Agachamento Isométrico na Parede|Agachamento com Elástico|Leg Press 45°|Leg Press Horizontal|Leg Press Unilateral|Cadeira Extensora|Cadeira Extensora Unilateral|Afundo com Halteres|Afundo no Smith|Avanço (Reverse Lunge)|Passada em Deslocamento|Passada Lateral|Step-up (Subida no Banco)",
+  "Posterior / Isquiotibiais": "Mesa Flexora|Mesa Flexora Unilateral|Cadeira Flexora|Cadeira Flexora Unilateral|Flexora em Pé (Unilateral)|Flexora na Polia|Stiff com Barra|Stiff com Halteres|Stiff Unilateral com Halter|Levantamento Terra Romeno|Bom Dia (Good Morning)|Nordic Curl|Flexão de Pernas na Bola Suíça|Flexão de Pernas com Elástico|Levantamento Terra com Pernas Estendidas",
+  "Glúteos": "Elevação Pélvica com Barra|Elevação Pélvica na Máquina|Elevação Pélvica com Halter|Elevação Pélvica Unilateral|Ponte de Glúteo no Solo|Glúteo na Polia (Coice)|Glúteo na Máquina (Kickback)|Glúteo Quatro Apoios com Caneleira|Hiperextensão Reversa|Abdução de Quadril na Polia|Abdução com Elástico (Caminhada Lateral)|Agachamento Sumô com Halter|Afundo Búlgaro (Foco em Glúteo)|Passada Lateral (Foco em Glúteo)|Cadeira Abdutora|Hidrante (Fire Hydrant)|Agachamento Sumô na Máquina",
+  "Adutores / Abdutores": "Cadeira Adutora|Cadeira Abdutora|Adução na Polia|Abdução na Polia|Adução com Bola entre os Joelhos|Elevação Lateral de Perna Deitado|Agachamento Sumô (Adutores)|Prancha Lateral com Elevação de Perna",
+  "Panturrilhas": "Panturrilha em Pé na Máquina (Gêmeos)|Panturrilha Sentado (Cavalinho)|Panturrilha no Leg Press|Panturrilha Unilateral em Pé com Halter|Panturrilha no Smith|Panturrilha no Hack|Panturrilha Burro (Donkey Calf Raise)|Tibial Anterior (Elevação de Ponta de Pé)|Saltos na Ponta dos Pés",
+  "Core / Abdômen": "Abdominal Supra (Crunch)|Abdominal na Máquina|Abdominal na Polia (Corda)|Abdominal Infra (Elevação de Pernas Deitado)|Elevação de Pernas na Barra Fixa|Elevação de Joelhos na Paralela (Cadeira Romana)|Abdominal Remador|Abdominal Bicicleta|Abdominal Canivete (V-up)|Abdominal Oblíquo (Toque no Calcanhar)|Rotação Russa|Rotação Russa com Anilha|Lenhador na Polia (Wood Chop)|Inclinação Lateral com Halter|Prancha Frontal|Prancha Lateral|Prancha com Elevação de Perna|Mountain Climber|Roda Abdominal (Ab Roller)|Vacuum Abdominal|Dead Bug|Bird Dog|Hollow Hold|Pallof Press",
+  "Lombar": "Hiperextensão (Banco Romano)|Extensão Lombar na Máquina|Superman|Bom Dia (Lombar)|Levantamento Terra (Lombar)|Remada Curvada (Lombar)|Ponte com Elevação de Braço e Perna",
+  "Cardio": "Esteira - Caminhada|Esteira - Corrida|Esteira Inclinada|Esteira HIIT (Tiros)|Bicicleta Ergométrica|Bicicleta Spinning|Elíptico (Transport)|Simulador de Escada|Remo Ergômetro|Ski Erg|Pular Corda|Corrida ao Ar Livre|Caminhada ao Ar Livre|Natação|Bike ao Ar Livre",
+  "Funcional / Corpo Inteiro": "Burpee|Kettlebell Swing|Agachamento com Salto (Jump Squat)|Thruster com Halteres|Clean com Halteres|Snatch com Halter|Turkish Get-Up|Slam Ball|Arremesso de Medicine Ball|Battle Rope (Corda Naval)|Box Jump (Salto na Caixa)|Salto Lateral|Polichinelo|Caminhada do Urso|Trenó (Empurrar)|Pular Corda Dupla|Agachamento com Press (Thruster na Barra)",
+  "Mobilidade / Alongamento": "Alongamento de Quadríceps|Alongamento de Posterior de Coxa|Alongamento de Peitoral|Alongamento de Ombros|Alongamento de Panturrilha|Alongamento de Glúteos|Alongamento Lombar (Postura da Criança)|Gato-Camelo (Cat-Cow)|Mobilidade de Quadril 90/90|Rotação Torácica|Liberação com Foam Roller"
 };
 
 function sair() {
@@ -253,6 +260,7 @@ auth.onAuthStateChanged(async u => {
     }
     ME = { uid: u.uid, ...d };
     try { PLAN = (await db.doc("plans/main").get()).data() || {}; } catch (e) { PLAN = {}; }
+    try { const q = await db.collection("exercicios").where("instrutor", "==", u.uid).get(); CUST = q.docs.map(d => d.data()); } catch (e) { CUST = []; }
     render();
   } catch (e) {
     console.log(e);
@@ -261,7 +269,7 @@ auth.onAuthStateChanged(async u => {
 });
 
 let PLAN = {}, tab = "al", curT = "A", curG = Object.keys(G)[0], curA = null;
-let ALU = [], LOGS = [], DIETS = [], ALERTAS = [], PEDIDOS = [], TRC = {}, FOT = [];
+let ALU = [], LOGS = [], DIETS = [], ALERTAS = [], PEDIDOS = [], TRC = {}, FOT = [], CUST = [];
 const TR = ["A", "B", "C", "D", "E"];
 
 async function render() {
@@ -403,8 +411,11 @@ async function vTreinos() {
     <select onchange="curT=this.value;render()">${TR.map(t => `<option ${t === curT ? "selected" : ""}>${t}</option>`).join("")}</select>
     <label>Grupo muscular</label>
     <select onchange="curG=this.value;render()">${Object.keys(G).map(x => `<option ${x === curG ? "selected" : ""}>${x}</option>`).join("")}</select>
-    <label>Exercício</label>
-    <select id="en">${G[curG].split("|").map(x => `<option>${x}</option>`).join("")}</select>
+    <label>Exercício <span class="mut">(digite para buscar em todos os grupos)</span></label>
+    <input id="eq" placeholder="Ex: voador, pulley, stiff, esteira..." oninput="filtrarSel()" style="text-transform:none">
+    <select id="en" style="margin-top:6px">${opcoesEx("")}</select>
+    <label>Não achou? Digite o nome do exercício</label>
+    <input id="ecustom" placeholder="Exercício personalizado (fica salvo para você)">
     <div class="row">
       <div><label>Séries</label><input id="se" type="number" value="3"></div>
       <div><label>Repetições</label><input id="rp" value="12"></div>
@@ -443,12 +454,38 @@ async function gravarTreino(t, arr) {
   await db.doc("treinos/" + curA).set({ [t]: arr }, { merge: true });
 }
 
+const nzs = t => String(t).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+function opcoesEx(q) {
+  const ws = nzs(q || "").split(/\s+/).filter(Boolean), out = [];
+  Object.keys(G).forEach(g => {
+    if (!ws.length && g !== curG) return;
+    const nomes = G[g].split("|").concat(CUST.filter(c => c.g === g).map(c => c.n));
+    [...new Set(nomes)].forEach(n => {
+      if (ws.every(w => nzs(n + " " + g).includes(w))) out.push(`<option value="${esc(g)}|${esc(n)}">${esc(n)}${ws.length ? " · " + esc(g) : ""}</option>`);
+    });
+  });
+  return out.join("") || '<option value="">Nenhum encontrado - digite o nome abaixo</option>';
+}
+function filtrarSel() { $("en").innerHTML = opcoesEx($("eq").value); }
+
 async function addE() {
   try {
     const tr = await treinoFresco();
     const arr = Array.isArray(tr[curT]) ? tr[curT].slice() : [];
-    arr.push({ id: "e" + Date.now(), n: $("en").value, g: curG, s: $("se").value, r: $("rp").value, carga: $("cg").value.trim(), gif: $("gf").value.trim() });
+    const custom = $("ecustom").value.trim();
+    let g = curG, n;
+    if (custom) n = custom;
+    else {
+      const v = $("en").value;
+      if (!v) { alert("Escolha um exercício ou digite o nome."); return; }
+      const k = v.indexOf("|"); g = v.slice(0, k); n = v.slice(k + 1);
+    }
+    arr.push({ id: "e" + Date.now(), n, g, s: $("se").value, r: $("rp").value, carga: $("cg").value.trim(), gif: $("gf").value.trim() });
     await gravarTreino(curT, arr);
+    if (custom && !CUST.some(c => c.n === n && c.g === g)) {
+      const slug = nzs(n).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      try { await db.doc("exercicios/" + ME.uid.slice(0, 8) + "_" + slug).set({ n, g, instrutor: ME.uid, ts: Date.now() }); CUST.push({ n, g }); } catch (e) { console.log(e); }
+    }
     toast("Exercício adicionado");
   } catch (e) { console.log(e); alert("Não foi possível salvar: " + e.message); }
   render();
